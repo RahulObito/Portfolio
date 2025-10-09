@@ -1,0 +1,175 @@
+/** @import must precede all other statements */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Tailwind CSS theme
+   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
+   */
+  :root {
+    /* Light mode (user provided) */
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 0 0% 10%; /* #1A1A1A approx */
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    /* Accent: purple 8A2BE2 -> hsl(271 76% 53%) */
+    --primary: 271 76% 53%;
+    --primary-foreground: 0 0% 10%;
+
+    --secondary: 271 76% 53%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 210 16% 96%;
+    --muted-foreground: 215 16% 35%;
+
+    --accent: 271 76% 53%;
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 12% 94%;
+    --input: 220 12% 94%;
+    --ring: 271 76% 53%;
+
+    --radius: 1rem;
+
+    /* Sidebar (unused but kept consistent) */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark mode (user provided) */
+    --background: 0 0% 4%; /* #0A0A0A */
+    --foreground: 0 0% 100%; /* #FFFFFF */
+
+    --card: 223 14% 13%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 223 14% 13%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 271 76% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 271 76% 53%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 223 14% 16%;
+    --muted-foreground: 217 12% 70%;
+
+    --accent: 271 76% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 45.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 223 14% 20%;
+    --input: 223 14% 20%;
+    --ring: 271 76% 53%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; }
+  body { @apply bg-background text-foreground; font-family: 'Poppins', 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  .font-heading { font-family: 'Playfair Display', ui-serif, Georgia, serif; }
+}
+
+@layer utilities {
+  .text-gradient { background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent))); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .bg-gradient-hero { background: radial-gradient(1200px 600px at 20% -10%, hsl(var(--accent)/.22), transparent), radial-gradient(800px 500px at 80% 10%, hsl(var(--primary)/.20), transparent), linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted))); }
+  .bg-glass { background-color: hsl(var(--card) / 0.6); backdrop-filter: blur(12px); }
+  .btn-glow { background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent))); color: hsl(var(--primary-foreground)); box-shadow: 0 10px 25px hsl(var(--primary)/.3); transition: transform .2s ease, box-shadow .2s ease; }
+  .btn-glow:hover { transform: translateY(-2px); box-shadow: 0 16px 35px hsl(var(--primary)/.35); }
+  .btn-glow-secondary { background: hsl(var(--secondary)); color: hsl(var(--foreground)); box-shadow: inset 0 0 0 1px hsl(var(--border)); }
+  .icon-link { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 9999px; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); transition: transform .2s ease, box-shadow .2s ease; }
+  .icon-link:hover { transform: translateY(-2px); box-shadow: 0 10px 20px hsl(var(--primary)/.2); color: hsl(var(--primary)); }
+  .input-glow { width: 100%; margin-top: 6px; padding: 12px 14px; border-radius: 14px; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); outline: none; transition: box-shadow .2s ease, border-color .2s ease; }
+  .input-glow:focus { border-color: hsl(var(--ring)); box-shadow: 0 0 0 4px hsl(var(--ring)/.15), 0 10px 30px hsl(var(--primary)/.15); }
+  .mask-circle-reveal { clip-path: circle(0% at 50% 50%); animation: revealCircle .9s ease forwards; }
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.is-visible { opacity: 1; transform: translateY(0px); }
+  .type-caret { position: relative; display: inline; }
+  .type-caret::after { display: none; }
+  .type-caret.no-caret::after { display: none; animation: none; opacity: 0; }
+  .parallax-blobs { position: absolute; inset: 0; background:
+      radial-gradient(600px 300px at 10% 10%, hsl(var(--accent)/.25), transparent),
+      radial-gradient(500px 220px at 90% 20%, hsl(var(--primary)/.25), transparent);
+      filter: blur(20px);
+    }
+
+  /* Loading overlay */
+  .loading-overlay-fade { transition: opacity .35s ease; }
+  .tilt-card { transform: perspective(800px) rotateX(calc(var(--my, 0) * 8deg)) rotateY(calc(var(--mx, 0) * -8deg)); transition: transform .2s ease; }
+  .perspective { perspective: 900px; }
+  .btn-glow .ripple, .btn-glow-secondary .ripple, button .ripple { position: absolute; border-radius: 50%; transform: scale(0); background: hsl(var(--primary)/.25); animation: ripple .6s ease-out; pointer-events: none; }
+  .animate-float { animation: float 6s ease-in-out infinite; }
+  .animation-delay-500 { animation-delay: .5s; }
+  .animation-delay-700 { animation-delay: .7s; }
+  .animation-delay-1000 { animation-delay: 1s; }
+
+  /* Projects */
+  .project-card { position: relative; overflow: hidden; }
+  .project-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.18)); opacity: 0; transition: opacity .25s ease; }
+  .project-card:hover::after { opacity: 1; }
+  .project-meta { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px; color: white; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .project-tag { background: rgba(255,255,255,0.06); padding: 6px 10px; border-radius: 999px; font-size: 12px; }
+  .phone-frame { background: #fff; border-radius: 28px; padding: 12px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.06); aspect-ratio: 9/20; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .phone-frame img { object-fit: cover; width: 100%; height: 100%; }
+  /* Crop utility to hide bottom-right watermark by shifting visible focus upward and scaling slightly */
+  .crop-watermark { object-position: 50% 12%; transform: scale(1.06); }
+  .no-select { user-select: none; }
+
+  /* Skill card ring glow */
+  .skill-ring {
+    position: absolute;
+    inset: -8px;
+    border-radius: 1rem;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.98);
+    transition: opacity .25s ease, transform .35s ease, filter .25s ease;
+    filter: blur(6px);
+    box-shadow: 0 0 40px 6px rgba(99,102,241,0.25), 0 0 24px 3px rgba(139,92,246,0.18);
+  }
+  .group:hover .skill-ring { opacity: 1; transform: scale(1.06); filter: blur(8px); }
+  .skill-ring-pulse {
+    position: absolute; inset: -14px; border-radius: 1rem; pointer-events: none; opacity: 0.45; mix-blend-mode: screen;
+    background: radial-gradient(circle at 30% 20%, rgba(99,102,241,0.20), transparent 20%), radial-gradient(circle at 70% 80%, rgba(139,92,246,0.14), transparent 20%);
+    transition: opacity .3s ease, transform .35s ease;
+  }
+  .group:hover .skill-ring-pulse { opacity: 1; transform: scale(1.02); }
+}
+
+@keyframes caret { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+@keyframes revealCircle { to { clip-path: circle(70.7% at 50% 50%) } }
+@keyframes ripple { to { transform: scale(2.8); opacity: 0; } }
+@keyframes float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
