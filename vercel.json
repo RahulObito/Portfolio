@@ -3,5 +3,9 @@
   "devCommand": "pnpm dev",
   "installCommand": "pnpm install",
   "framework": "vite",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist/spa",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }
