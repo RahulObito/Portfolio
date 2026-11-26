@@ -23,20 +23,43 @@ export default function Index(){
   const [menu,setMenu]=useState(false);
   const [paused,setPaused]=useState(false);
   const [status,setStatus]=useState("");
+  const [sending,setSending]=useState(false);
+  const [sent,setSent]=useState(false);
+  const accessKey=String(import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "").trim();
   const move=(e:PointerEvent<HTMLElement>)=>{
     if(e.pointerType!=="mouse")return;
     const r=e.currentTarget.getBoundingClientRect();
     e.currentTarget.style.setProperty("--px",((e.clientX-r.left)/r.width*100)+"%");
     e.currentTarget.style.setProperty("--py",((e.clientY-r.top)/r.height*100)+"%");
   };
-  const submit=(e:FormEvent<HTMLFormElement>)=>{
+  const submit=async(e:FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
-    const f=new FormData(e.currentTarget);
+    if(sending)return;
+    const form=e.currentTarget;
+    const f=new FormData(form);
     const name=String(f.get("name")||"").trim(), email=String(f.get("email")||"").trim(), message=String(f.get("message")||"").trim(), subject=String(f.get("subject")||"").trim();
+    setSent(false);
     if(!name||!email||!message){setStatus("Please enter your name, email and message.");return;}
-    const body="Name: "+name+"\nEmail: "+email+"\n\n"+message;
-    window.location.href="mailto:akshirsagar08@gmail.com?subject="+encodeURIComponent(subject||"Portfolio enquiry from "+name)+"&body="+encodeURIComponent(body);
-    setStatus("Your email app should open with the message. Please send it there. Nothing has been sent automatically.");
+    if(!accessKey){
+      const body="Name: "+name+"\nEmail: "+email+"\n\n"+message;
+      window.location.href="mailto:akshirsagar08@gmail.com?subject="+encodeURIComponent(subject||"Portfolio enquiry from "+name)+"&body="+encodeURIComponent(body);
+      setStatus("Please send the prepared message from your email app. Nothing has been sent automatically.");
+      return;
+    }
+    if(f.get("botcheck")){setStatus("Unable to submit the form.");return;}
+    setSending(true);setStatus("Sending your message...");
+    try{
+      const res=await fetch("https://api.web3forms.com/submit",{
+        method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
+        body:JSON.stringify({access_key:accessKey,name,email,subject:subject||"Portfolio enquiry from "+name,message,from_name:"Rahul Portfolio"})
+      });
+      const result=await res.json();
+      if(!res.ok||result.success!==true)throw new Error("Submission rejected");
+      setSent(true);setStatus("Message sent successfully! Thank you for reaching out.");
+      form.reset();
+    }catch{
+      setStatus("Your message could not be sent. Please try again or use the email link.");
+    }finally{setSending(false);}
   };
   return <div className="rk-site">
     <a className="rk-skip" href="#content">Skip to content</a>
@@ -63,7 +86,7 @@ export default function Index(){
       <div className="rk-stack"><div className="rk-stack-head"><span>MY TECHNOLOGY STACK</span><button type="button" onClick={()=>setPaused(!paused)}>{paused?"Play":"Pause"} animation</button></div><div className={"rk-marquee"+(paused?" paused":"")}>{[0,1].map(i=><div className="rk-group" key={i} aria-hidden={i===1}>{technologies.map(t=><span key={t}>{t}</span>)}</div>)}</div></div>
       <section className="rk-wrap rk-section" id="experience"><p className="rk-eyebrow">03 / EXPERIENCE</p><h2>My professional <span className="rk-grad">journey.</span></h2><div className="rk-timeline"><article><span>DEC 2025 — PRESENT</span><h3>WordPress Executive · DigitalNil</h3><p>Website development, Elementor customization, SEO, automation, hosting and performance optimization.</p></article><article><span>2023 — 2024</span><h3>Media &amp; Design Head · RNXG</h3><p>Creative leadership, team coordination, branding and design management.</p></article></div></section>
       <section className="rk-wrap rk-section rk-education" id="education"><p className="rk-eyebrow">04 / EDUCATION</p><h2>Academic <span className="rk-grad">background.</span></h2><article className="rk-edu-card"><div className="rk-symbol"><GraduationCap size={29}/></div><div><span>2022 — 2026 · COMPLETED</span><h3>B.Tech in Computer Science &amp; Engineering</h3><p>Shri Guru Gobind Singhji Institute of Engineering and Technology, Nanded.</p></div></article></section>
-      <section className="rk-contact" id="contact"><div className="rk-wrap rk-section"><p className="rk-eyebrow">05 / GET IN TOUCH</p><h2>Let's build something<br/><span className="rk-grad">meaningful together.</span></h2><p className="rk-copy">Have a project, job opportunity or an idea? I'd love to hear from you.</p><div className="rk-contact-grid"><div><div className="rk-available"><i/> Open to opportunities</div>{contacts.map(({icon:Icon,label,value,href})=><a key={label} className="rk-method" href={href} target={href.startsWith("https:")?"_blank":undefined} rel={href.startsWith("https:")?"noreferrer":undefined}><div className="rk-symbol"><Icon size={21}/></div><div><small>{label}</small><span>{value}</span></div>{href.startsWith("https:")&&<ArrowUpRight className="rk-external" size={16}/>}</a>)}</div><form className="rk-form" onSubmit={submit}><label htmlFor="rk-name">Your name</label><input id="rk-name" name="name" required autoComplete="name" maxLength={100} placeholder="John Doe"/><label htmlFor="rk-email">Email address</label><input id="rk-email" name="email" type="email" required autoComplete="email" maxLength={254} placeholder="you@example.com"/><label htmlFor="rk-subject">Subject</label><input id="rk-subject" name="subject" maxLength={150} placeholder="Job opportunity / Project"/><label htmlFor="rk-message">Your message</label><textarea id="rk-message" name="message" required maxLength={2000} placeholder="Tell me what you have in mind..."/><button type="submit" className="rk-btn primary">Open email app <ArrowUpRight size={16}/></button><p className="rk-form-note">The form prepares your message in your email app. You send it from there.</p><p role="status" className="rk-form-note">{status}</p></form></div></div></section>
+      <section className="rk-contact" id="contact"><div className="rk-wrap rk-section"><p className="rk-eyebrow">05 / GET IN TOUCH</p><h2>Let's build something<br/><span className="rk-grad">meaningful together.</span></h2><p className="rk-copy">Have a project, job opportunity or an idea? I'd love to hear from you.</p><div className="rk-contact-grid"><div><div className="rk-available"><i/> Open to opportunities</div>{contacts.map(({icon:Icon,label,value,href})=><a key={label} className="rk-method" href={href} target={href.startsWith("https:")?"_blank":undefined} rel={href.startsWith("https:")?"noreferrer":undefined}><div className="rk-symbol"><Icon size={21}/></div><div><small>{label}</small><span>{value}</span></div>{href.startsWith("https:")&&<ArrowUpRight className="rk-external" size={16}/>}</a>)}</div><form className="rk-form" onSubmit={submit} aria-busy={sending}><input type="checkbox" name="botcheck" hidden tabIndex={-1} aria-hidden="true" style={{display:"none"}}/><label htmlFor="rk-name">Your name</label><input id="rk-name" name="name" required autoComplete="name" maxLength={100} placeholder="John Doe"/><label htmlFor="rk-email">Email address</label><input id="rk-email" name="email" type="email" required autoComplete="email" maxLength={254} placeholder="you@example.com"/><label htmlFor="rk-subject">Subject</label><input id="rk-subject" name="subject" maxLength={150} placeholder="Job opportunity / Project"/><label htmlFor="rk-message">Your message</label><textarea id="rk-message" name="message" required maxLength={2000} placeholder="Tell me what you have in mind..."/><button type="submit" className="rk-btn primary" disabled={sending} style={{opacity:sending?.65:1}}>{sending?"Sending...":accessKey?"Send Message":"Open email app"} <ArrowUpRight size={16}/></button><p className="rk-form-note">{accessKey?"Your message is sent to my inbox using Web3Forms.":"The form prepares your message in your email app. You send it from there."}</p><p role="status" aria-live="polite" className="rk-form-note" style={{color:sent?"#86efac":undefined}}>{status}</p></form></div></div></section>
     </main>
     <footer className="rk-footer"><div className="rk-wrap"><span>© {new Date().getFullYear()} Rahul Kshirsagar</span><span>Build. Optimize. Automate. <a href="#hero" aria-label="Back to top"><ArrowUp size={16}/></a></span></div></footer>
   </div>;
