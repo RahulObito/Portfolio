@@ -42,25 +42,41 @@ export default function OptionalAnalytics() {
   const [choice, setChoice] = useState<Consent>(readConsent);
   const [open, setOpen] = useState(false);
   useEffect(() => { if (choice === "accepted") startOptionalAnalytics(); }, [choice]);
-  if (!enabled) return null;
+  useEffect(() => {
+    if (location.hash === "#privacy-settings") setOpen(true);
+  }, []);
   function choose(next: Exclude<Consent,null>) {
     try { localStorage.setItem(consentKey,next); } catch {}
     if (next === "declined" && started) {
       w.gtag?.("consent","update",{analytics_storage:"denied",ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied"});
       w.clarity?.("consentv2",{ad_Storage:"denied",analytics_Storage:"denied"});
+      // Expire analytics cookies accessible on this website.
+      for (const entry of document.cookie.split(";")) {
+        const name = entry.split("=")[0].trim();
+        if (/^(_ga($|_)|_clck$|_clsk$)/.test(name)) {
+          document.cookie = name + "=; Max-Age=0; Path=/";
+          document.cookie = name + "=; Max-Age=0; Path=/; Domain=" + location.hostname;
+        }
+      }
       location.reload();
+      return;
     }
     setChoice(next); setOpen(false);
   }
-  const shown = choice === null || open;
-  return <div style={{position:"fixed",bottom:16,left:16,right:16,zIndex:1000,maxWidth:420,color:"#eee",fontFamily:"inherit"}}>
-    {shown ? <section aria-label="Privacy choices" style={{background:"#171322",border:"1px solid #57466d",borderRadius:14,padding:16,boxShadow:"0 4px 25px #0008"}}>
-      <strong>Optional website analytics</strong>
-      <p style={{fontSize:13,lineHeight:1.5,margin:"8px 0 12px"}}>This site uses Vercel's cookieless visitor statistics. With your permission, {hasGA && "Google Analytics measures visits and successful contact submissions without form contents. "}{hasClarity && "Microsoft Clarity measures interactions and masked session recordings; contact form fields are masked. "}You can change your choice anytime.</p>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-        <button type="button" onClick={()=>choose("accepted")} style={{background:"#7c3aed",color:"white",border:0,borderRadius:8,padding:"9px 14px"}}>Allow optional analytics</button>
-        <button type="button" onClick={()=>choose("declined")} style={{background:"transparent",color:"#eee",border:"1px solid #777",borderRadius:8,padding:"9px 14px"}}>Decline</button>
+  const shown = enabled && (choice === null || open);
+  return <>
+    <nav className="rk-wrap rk-privacy-footer" aria-label="Privacy">
+      <a href="/privacy.html">Privacy Policy</a>
+      {enabled && <><span aria-hidden="true">·</span><button id="privacy-settings" type="button" aria-expanded={shown} onClick={()=>setOpen(true)}>Privacy Settings</button></>}
+    </nav>
+    {shown && <section className="rk-privacy-notice" aria-label="Privacy choices" aria-live="polite">
+      <div className="rk-privacy-heading"><span aria-hidden="true">◇</span><strong>Your privacy matters</strong></div>
+      <p>This site uses Vercel's cookieless visitor statistics. With your permission, {hasGA && "Google Analytics measures visits and successful contact submissions without form contents. "}{hasClarity && "Microsoft Clarity measures interactions and masked session recordings. Contact form fields are masked. "}Optional analytics start only with your consent.</p>
+      <div className="rk-privacy-actions">
+        <button type="button" onClick={()=>choose("accepted")}>Accept analytics</button>
+        <button type="button" onClick={()=>choose("declined")}>Decline</button>
       </div>
-    </section> : <button type="button" onClick={()=>setOpen(true)} style={{background:"#171322",color:"#ddd",border:"1px solid #57466d",borderRadius:8,padding:"6px 10px",fontSize:12}}>Privacy choices</button>}
-  </div>;
+      <div className="rk-privacy-note"><a href="/privacy.html">Privacy Policy</a><span>Change your choice anytime in the footer.</span>{choice !== null && <button type="button" onClick={()=>setOpen(false)}>Close</button>}</div>
+    </section>}
+  </>;
 }
