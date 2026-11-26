@@ -27,6 +27,21 @@ function startOptionalAnalytics() {
     w.gtag("event", "page_view", { page_location: location.origin + location.pathname, page_title: document.title, page_referrer: document.referrer ? new URL(document.referrer).origin : "" });
     addScript("https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(gaId));
     window.addEventListener("portfolio-contact-success", () => w.gtag?.("event", "generate_lead"));
+    document.addEventListener("click", (event) => {
+      const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
+      if (!link) return;
+      const href = link.getAttribute("href") || "";
+      const explicit = link.getAttribute("data-analytics-event");
+      let name = explicit === "resume_download" ? explicit : "";
+      if (!name && href.startsWith("mailto:")) name="email_click";
+      if (!name && href.startsWith("tel:")) name="phone_click";
+      if (!name && /^https:\/\/(www\.)?linkedin\.com\//.test(href)) name="linkedin_click";
+      if (!name && /^https:\/\/github\.com\//.test(href)) name="github_click";
+      if (!name && href === "#contact") name="contact_cta_click";
+      if (!name && href === "#skills") name="skills_cta_click";
+      if (!name && href === "#experience") name="experience_cta_click";
+      if (name) w.gtag?.("event",name);
+    });
   }
   if (hasClarity) {
     const c: NonNullable<AnalyticsWindow["clarity"]> = (...args: unknown[]) => { (c.q ||= []).push(args); };
