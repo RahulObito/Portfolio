@@ -5,7 +5,7 @@ const clarityId = String(import.meta.env.VITE_CLARITY_PROJECT_ID || "").trim();
 const hasGA = /^G-[A-Z0-9]+$/.test(gaId);
 const hasClarity = /^[a-z0-9]+$/i.test(clarityId);
 const enabled = hasGA || hasClarity;
-const consentKey = "rk_optional_analytics_v1";
+const consentKey = "rk_optional_analytics_v2_" + (hasGA ? "ga" : "") + (hasClarity ? "clarity" : "");
 type Consent = "accepted" | "declined" | null;
 type AnalyticsWindow = Window & { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void; clarity?: ((...args: unknown[]) => void) & { q?: unknown[][] } };
 const w = window as AnalyticsWindow;
@@ -24,7 +24,7 @@ function startOptionalAnalytics() {
     w.gtag("consent", "default", { analytics_storage: "granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
     w.gtag("js", new Date());
     w.gtag("config", gaId, { send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false });
-    w.gtag("event", "page_view", { page_location: location.origin + location.pathname, page_title: document.title });
+    w.gtag("event", "page_view", { page_location: location.origin + location.pathname, page_title: document.title, page_referrer: document.referrer ? new URL(document.referrer).origin : "" });
     addScript("https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(gaId));
     window.addEventListener("portfolio-contact-success", () => w.gtag?.("event", "generate_lead"));
   }
@@ -56,7 +56,7 @@ export default function OptionalAnalytics() {
   return <div style={{position:"fixed",bottom:16,left:16,right:16,zIndex:1000,maxWidth:420,color:"#eee",fontFamily:"inherit"}}>
     {shown ? <section aria-label="Privacy choices" style={{background:"#171322",border:"1px solid #57466d",borderRadius:14,padding:16,boxShadow:"0 4px 25px #0008"}}>
       <strong>Optional website analytics</strong>
-      <p style={{fontSize:13,lineHeight:1.5,margin:"8px 0 12px"}}>This site uses Vercel's cookieless visitor statistics. With your permission, optional Google Analytics and Microsoft Clarity measure visits and interactions, including masked session recordings. Contact form fields are masked. You can change your choice anytime.</p>
+      <p style={{fontSize:13,lineHeight:1.5,margin:"8px 0 12px"}}>This site uses Vercel's cookieless visitor statistics. With your permission, {hasGA && "Google Analytics measures visits and successful contact submissions without form contents. "}{hasClarity && "Microsoft Clarity measures interactions and masked session recordings; contact form fields are masked. "}You can change your choice anytime.</p>
       <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
         <button type="button" onClick={()=>choose("accepted")} style={{background:"#7c3aed",color:"white",border:0,borderRadius:8,padding:"9px 14px"}}>Allow optional analytics</button>
         <button type="button" onClick={()=>choose("declined")} style={{background:"transparent",color:"#eee",border:"1px solid #777",borderRadius:8,padding:"9px 14px"}}>Decline</button>
