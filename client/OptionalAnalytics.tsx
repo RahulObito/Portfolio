@@ -31,8 +31,7 @@ function startOptionalAnalytics() {
       const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
       if (!link) return;
       const href = link.getAttribute("href") || "";
-      const explicit = link.getAttribute("data-analytics-event");
-      let name = explicit === "resume_download" ? explicit : "";
+      let name = "";
       if (!name && href.startsWith("mailto:")) name="email_click";
       if (!name && href.startsWith("tel:")) name="phone_click";
       if (!name && /^https:\/\/(www\.)?linkedin\.com\//.test(href)) name="linkedin_click";
