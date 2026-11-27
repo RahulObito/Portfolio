@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type PointerEvent } from "react";
-import { ArrowDown, ArrowUpRight, ArrowUp, Bot, ChartNoAxesCombined, Code2, Download, Github, Globe, GraduationCap, Linkedin, Mail, Menu, Phone, Server, ShoppingCart, Workflow, X, Zap } from "lucide-react";
+import { ArrowDown, ArrowUpRight, ArrowUp, Bot, ChartNoAxesCombined, Code2, Github, Globe, GraduationCap, Linkedin, Mail, Menu, Phone, Server, ShoppingCart, Workflow, X, Zap } from "lucide-react";
 import "./portfolio-v3.css";
 import OptionalAnalytics from "../OptionalAnalytics";
 
@@ -77,7 +77,7 @@ export default function Index(){
         <div className="rk-intro"><div className="rk-tag"><i/> WORDPRESS DEVELOPER &amp; AUTOMATION</div><h1>Hi, I'm Rahul.<br/><span className="rk-grad">I Build. Optimize.<br/>Automate.</span></h1>
           <p>Building high-performing websites, intelligent workflows and seamless digital experiences.</p>
           <div className="rk-buttons"><a className="rk-btn primary" href="#skills">Explore My Skills <ArrowUpRight size={17}/></a><a className="rk-btn secondary" href="#experience">My Experience <ArrowDown size={16}/></a></div>
-          <div className="rk-social"><a className="rk-resume-link" data-analytics-event="resume_download" href="/Rahul_Kshirsagar_Resume.pdf" download="Rahul_Kshirsagar_Resume.pdf"><Download size={17}/> Download Resume</a><a href="https://github.com/RahulObito" target="_blank" rel="noreferrer"><Github size={17}/> GitHub <ArrowUpRight size={12}/></a><a href="https://www.linkedin.com/in/rahul-kshirsagar03" target="_blank" rel="noreferrer"><Linkedin size={17}/> LinkedIn <ArrowUpRight size={12}/></a></div>
+          <div className="rk-social"><a href="https://github.com/RahulObito" target="_blank" rel="noreferrer"><Github size={17}/> GitHub <ArrowUpRight size={12}/></a><a href="https://www.linkedin.com/in/rahul-kshirsagar03" target="_blank" rel="noreferrer"><Linkedin size={17}/> LinkedIn <ArrowUpRight size={12}/></a></div>
         </div>
       </section>
       <div className="rk-stats"><div className="rk-wrap rk-stat-grid"><div><strong>1 Year</strong><span>Professional Experience</span></div><div><strong>WordPress</strong><span>Core Specialization</span></div><div><strong>B.Tech</strong><span>Computer Science</span></div></div></div>
